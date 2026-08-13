@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Chess Pulse</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_part_selection">PartSelectionActivity</string>
+    <string name="title_activity_chapter_selection">chapterSelectionActivity</string>
+    <string name="title_activity_learn">LearnActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+</resources>

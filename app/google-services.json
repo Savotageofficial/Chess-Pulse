@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "819611259596",
+    "project_id": "chess-pulse-4e786",
+    "storage_bucket": "chess-pulse-4e786.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819611259596:android:6bad2759ccdf9cb8b02869",
+        "android_client_info": {
+          "package_name": "com.example.chesspulse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAH-joEdv3v3bKJhyaITT14XEr-9vVjASY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
