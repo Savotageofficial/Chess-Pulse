@@ -46,9 +46,13 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.platform.LocalLayoutDirection
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.platform.LocalLayoutDirection
 
 class LearnActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,22 +68,15 @@ class LearnActivity : ComponentActivity() {
 
         val nextChapter = chapterList?.get(indx + 1)
 
-        val comments = parser.extractMoveComments(PGN ?: "")
-        val hasInteraction = Regex("<([^>]+)>")
-        val moves = mutableListOf<String?>()
+        val comment = parser.extractMainlineComment(PGN ?: "")
+        val interactive = comment?.contains("<i>")
 
-        for (i in comments) {
-            val match = hasInteraction.find(i ?: "")
-            if (match != null) {
-                moves.add(match.groupValues[1])
-            } else {
-                moves.add(null)
-            }
-        }
+
+
         enableEdgeToEdge()
         setContent {
             ChessPulseTheme {
-                LearnScreen(title = title , Pgn = PGN , startingFEN , parser , interactive = false,  onNextChapterClick = {
+                LearnScreen(title = title , Pgn = PGN , startingFEN , parser , interactive = (interactive == true),  onNextChapterClick = {
                     val intent = Intent(this , LearnActivity::class.java).apply {
                         putExtra("title" , nextChapter?.name)
                         putExtra("startingFEN" , nextChapter?.startFen)
@@ -106,10 +103,17 @@ fun ChessBoard(
     state: ChessBoardState,
     arrows: List<List<String>> = emptyList(),
     interactive : Boolean,
+    gameIndexer: Int,
+    onGameIndexerChange: (Int) -> Unit,
+    onCommentIndexerChange: (Int) -> Unit,
+    game: List<String>,
+    commentIndexer : Int,
     modifier: Modifier = Modifier
 ) {
     var version = state.boardVersion
-
+    CompositionLocalProvider(
+        LocalLayoutDirection provides LayoutDirection.Ltr
+    ) {
     Box(modifier = modifier) {
         Column {
             for (rank in 7 downTo 0) {
@@ -123,7 +127,12 @@ fun ChessBoard(
                             square = square,
                             state = state,
                             isLight = (rank + file) % 2 == 1,
-                            interactive = interactive
+                            interactive = interactive,
+                            gameIndexer = gameIndexer,
+                            game = game,
+                            onGameIndexerChange = onGameIndexerChange,
+                            onCommentIndexerChange = onCommentIndexerChange,
+                            commentIndexer = commentIndexer
                         )
                     }
                 }
@@ -145,6 +154,7 @@ fun ChessBoard(
             }
         }
     }
+}
 }
 private fun squareCenter(square: String, squareSize: Float): Offset {
     val file = square[0] - 'a'          // 0..7, a->0
@@ -189,7 +199,12 @@ private fun ChessSquare(
     square: Square,
     state: ChessBoardState,
     isLight: Boolean,
-    interactive: Boolean
+    interactive: Boolean,
+    gameIndexer: Int,
+    game : List<String>,
+    onGameIndexerChange: (Int) -> Unit,
+    commentIndexer : Int,
+    onCommentIndexerChange: (Int) -> Unit
     ) {
     val version = state.boardVersion
     val isSelected = state.selectedSquare == square
@@ -208,11 +223,37 @@ private fun ChessSquare(
             .size(40.dp)
             .background(bgColor)
             .clickable {
-                if (interactive){
-                    state.onSquareTapped(square,
-                    {
+                if (interactive && (gameIndexer < game.size)){
+                    if (gameIndexer + 1 < game.size){
+                        val nextMove = game[gameIndexer + 1]
+                        state.onSquareTapped(square , nextMove = nextMove ,
+                            { move ->
+                                Log.d("move" , move.san)
+                                if (move.san == game[gameIndexer] ){
+                                    onGameIndexerChange(gameIndexer + 2)
+                                    onCommentIndexerChange(commentIndexer + 2)
+                                    true
+                                }else{
+                                    false
+                                }
 
-                    })
+                            })
+                    }else{
+                        state.onSquareTapped(square ,
+                            { move ->
+                                Log.d("move" , move.san)
+                                if (move.san == game[gameIndexer] ){
+                                    onGameIndexerChange(gameIndexer + 1)
+                                    onCommentIndexerChange(commentIndexer + 1)
+                                    true
+                                }else{
+                                    false
+                                }
+
+                            })
+
+                    }
+
                 }
 
             },
@@ -263,7 +304,7 @@ fun LearnScreen(title : String? ,
 
 
     val arrows = parser.extractArrows(Pgn ?: "")
-    Log.d("trace" , arrows.toString())
+//    Log.d("trace" , arrows.toString())
 
 
     val game = remember(Pgn) {
@@ -277,6 +318,8 @@ fun LearnScreen(title : String? ,
     val scrollState = rememberScrollState()
     var commentIndexer by remember { mutableIntStateOf(0) }
     val currentArrows = arrows.getOrNull(gameIndexer) ?: emptyList()
+
+    Log.d("trace" , gameIndexer.toString())
 
     val gradientBG = Brush.verticalGradient(
         colors = listOf(
@@ -305,7 +348,12 @@ fun LearnScreen(title : String? ,
                 state = boardState,
                 arrows = currentArrows,
                 modifier = Modifier.fillMaxWidth(),
-                interactive = interactive
+                interactive = interactive,
+                gameIndexer = gameIndexer,
+                game = game,
+                commentIndexer = commentIndexer,
+                onGameIndexerChange = { gameIndexer = it },
+                onCommentIndexerChange = {commentIndexer = it}
             )
         }
         Column(

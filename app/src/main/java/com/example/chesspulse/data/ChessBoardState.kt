@@ -22,7 +22,7 @@ class ChessBoardState(initialFen: String? = null) {
 
     fun pieceAt(square: Square) = board.getPiece(square)
 
-    fun onSquareTapped(square: Square ,onMove: () -> Unit) {
+    fun onSquareTapped(square: Square ,onMove: (Move) -> Boolean) {
         val currentSelection = selectedSquare
 
         if (currentSelection == null) {
@@ -39,16 +39,90 @@ class ChessBoardState(initialFen: String? = null) {
                 clearSelection() // tapped same square, deselect
                 return
             }
-            onMove()
+
             val move = Move(currentSelection, square)
-            if (board.legalMoves().any { it.from == currentSelection && it.to == square }) {
-                board.doMove(move)
-                boardVersion++
+
+            if (board.legalMoves().any {
+                    it.from == currentSelection &&
+                            it.to == square
+                }
+            ) {
+
+                // Calculate SAN WITHOUT changing the real board
+                val moveList = MoveList(board.fen)
+                moveList.add(move)
+
+                val san = moveList.toSanArray()[0]
+
+                Log.d("move", "SAN = $san")
+
+                // Put the SAN onto the Move object
+                move.setSan(san)
+
+                // Ask caller whether this move is allowed
+                val accepted = onMove(move)
+
+                if (accepted) {
+                    board.doMove(move)
+                    boardVersion++
+                }
             }
+
             clearSelection()
         }
     }
 
+    fun onSquareTapped(square: Square , nextMove: String ,onMove: (Move) -> Boolean) {
+        val currentSelection = selectedSquare
+
+        if (currentSelection == null) {
+            // First tap: select if there's a piece of the side to move
+            val piece = board.getPiece(square)
+            if (piece != com.github.bhlangonijr.chesslib.Piece.NONE &&
+                piece.pieceSide == board.sideToMove) {
+                selectedSquare = square
+                legalTargets = legalMovesFrom(square)
+            }
+        } else {
+            // Second tap: try to move
+            if (square == currentSelection) {
+                clearSelection() // tapped same square, deselect
+                return
+            }
+
+            val move = Move(currentSelection, square)
+
+            if (board.legalMoves().any {
+                    it.from == currentSelection &&
+                            it.to == square
+                }
+            ) {
+
+                // Calculate SAN WITHOUT changing the real board
+                val moveList = MoveList(board.fen)
+                moveList.add(move)
+
+                val san = moveList.toSanArray()[0]
+
+                Log.d("move", "SAN = $san")
+
+                // Put the SAN onto the Move object
+                move.setSan(san)
+
+                // Ask caller whether this move is allowed
+                val accepted = onMove(move)
+
+                if (accepted) {
+                    board.doMove(move)
+                    boardVersion++
+                    this.makeMove(nextMove)
+                    boardVersion++
+                }
+            }
+
+            clearSelection()
+        }
+    }
 
     fun makeMove(move : String){
         val success = board.doMove(move)
