@@ -51,6 +51,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.platform.LocalLayoutDirection
 
@@ -65,8 +66,12 @@ class LearnActivity : ComponentActivity() {
         val parser = PgnParser()
 
         val course_id = intent.getStringExtra("courseID")
-
-        val nextChapter = chapterList?.get(indx + 1)
+        var nextChapter = chapterList?.get(indx)
+        chapterList?.size?.let {
+            if (it < indx) {
+                nextChapter = chapterList[indx + 1]
+            }
+        }
 
         val comment = parser.extractMainlineComment(PGN ?: "")
         val interactive = comment?.contains("<i>")
@@ -211,6 +216,7 @@ private fun ChessSquare(
     val isLegalTarget = square in state.legalTargets
     val piece = state.pieceAt(square)
     val isCheckedKing = square == state.checkedKingSquare()
+    val context = LocalContext.current
 
     val bgColor = when {
         isCheckedKing -> CHECK_RED
@@ -226,7 +232,7 @@ private fun ChessSquare(
                 if (interactive && (gameIndexer < game.size)){
                     if (gameIndexer + 1 < game.size){
                         val nextMove = game[gameIndexer + 1]
-                        state.onSquareTapped(square , nextMove = nextMove ,
+                        state.onSquareTapped(square , nextMove = nextMove, context = context ,
                             { move ->
                                 Log.d("move" , move.san)
                                 if (move.san == game[gameIndexer] ){
@@ -239,7 +245,7 @@ private fun ChessSquare(
 
                             })
                     }else{
-                        state.onSquareTapped(square ,
+                        state.onSquareTapped(square , context = context,
                             { move ->
                                 Log.d("move" , move.san)
                                 if (move.san == game[gameIndexer] ){
@@ -303,7 +309,11 @@ fun LearnScreen(title : String? ,
     val boardState = remember { ChessBoardState(startingFEN) } // or pass a FEN for the lesson's position
 
 
-    val arrows = parser.extractArrows(Pgn ?: "")
+    var arrows = parser.extractArrows(Pgn ?: "")
+    arrows = arrows.toMutableList()
+    arrows.add(0 , emptyList())
+
+
 //    Log.d("trace" , arrows.toString())
 
 
@@ -318,6 +328,7 @@ fun LearnScreen(title : String? ,
     val scrollState = rememberScrollState()
     var commentIndexer by remember { mutableIntStateOf(0) }
     val currentArrows = arrows.getOrNull(gameIndexer) ?: emptyList()
+    val context = LocalContext.current
 
     Log.d("trace" , gameIndexer.toString())
 
@@ -444,7 +455,7 @@ fun LearnScreen(title : String? ,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.clickable {
                         if (gameIndexer < game.size) {
-                            boardState.makeMove(game[gameIndexer])
+                            boardState.makeMove(game[gameIndexer] , context = context)
                             gameIndexer += 1
                             commentIndexer +=1
                         }

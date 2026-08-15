@@ -1,11 +1,19 @@
 package com.example.chesspulse.data
 // ChessBoardState.kt
+import android.content.Context
+import android.media.MediaPlayer
 import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.example.chesspulse.R
 import com.github.bhlangonijr.chesslib.Board
+import com.github.bhlangonijr.chesslib.Piece
+import com.github.bhlangonijr.chesslib.PieceType
 import com.github.bhlangonijr.chesslib.Square
 import com.github.bhlangonijr.chesslib.move.Move
 import com.github.bhlangonijr.chesslib.move.MoveList
+
 
 class ChessBoardState(initialFen: String? = null) {
     private val board = Board().apply { if (initialFen != null) loadFromFen(initialFen) }
@@ -22,7 +30,7 @@ class ChessBoardState(initialFen: String? = null) {
 
     fun pieceAt(square: Square) = board.getPiece(square)
 
-    fun onSquareTapped(square: Square ,onMove: (Move) -> Boolean) {
+    fun onSquareTapped(square: Square , context: Context ,onMove: (Move) -> Boolean) {
         val currentSelection = selectedSquare
 
         if (currentSelection == null) {
@@ -65,6 +73,18 @@ class ChessBoardState(initialFen: String? = null) {
                 if (accepted) {
                     board.doMove(move)
                     boardVersion++
+                    val targetPiece = board.getPiece(move.getTo())
+                    val movingPiece = board.getPiece(move.getFrom())
+
+                    val isCapture =
+                        (targetPiece != Piece.NONE && targetPiece.getPieceSide() != movingPiece.getPieceSide())
+                                || (movingPiece.getPieceType() == PieceType.PAWN && move.getTo()
+                            .equals(board.getEnPassantTarget()))
+                    if (isCapture){
+                        takeSound(context)
+                    }else {
+                        playSound(context)
+                    }
                 }
             }
 
@@ -72,7 +92,7 @@ class ChessBoardState(initialFen: String? = null) {
         }
     }
 
-    fun onSquareTapped(square: Square , nextMove: String ,onMove: (Move) -> Boolean) {
+    fun onSquareTapped(square: Square , nextMove: String , context : Context ,onMove: (Move) -> Boolean) {
         val currentSelection = selectedSquare
 
         if (currentSelection == null) {
@@ -115,8 +135,21 @@ class ChessBoardState(initialFen: String? = null) {
                 if (accepted) {
                     board.doMove(move)
                     boardVersion++
-                    this.makeMove(nextMove)
+                    val targetPiece = board.getPiece(move.getTo())
+                    val movingPiece = board.getPiece(move.getFrom())
+
+                    val isCapture =
+                        (targetPiece != Piece.NONE && targetPiece.getPieceSide() != movingPiece.getPieceSide())
+                                || (movingPiece.getPieceType() == PieceType.PAWN && move.getTo()
+                            .equals(board.getEnPassantTarget()))
+                    if (isCapture){
+                        takeSound(context)
+                    }else {
+                        playSound(context)
+                    }
+                    this.makeMove(nextMove , context = context)
                     boardVersion++
+
                 }
             }
 
@@ -124,8 +157,40 @@ class ChessBoardState(initialFen: String? = null) {
         }
     }
 
-    fun makeMove(move : String){
+    fun playSound(context: Context) {
+        var mediaPlayer = MediaPlayer.create(context, R.raw.move)
+        if (board.isMated) {
+            mediaPlayer = MediaPlayer.create(context, R.raw.checkmate)
+        }
+        mediaPlayer?.start()
+
+        // Optional: release memory when done playing
+        mediaPlayer?.setOnCompletionListener { mp ->
+            mp.release()
+        }
+    }
+    fun takeSound(context: Context) {
+        var mediaPlayer = MediaPlayer.create(context, R.raw.capture)
+        if (board.isMated) {
+            mediaPlayer = MediaPlayer.create(context, R.raw.checkmate)
+        }
+        mediaPlayer?.start()
+
+        // Optional: release memory when done playing
+        mediaPlayer?.setOnCompletionListener { mp ->
+            mp.release()
+        }
+    }
+
+    fun makeMove(move : String , context: Context){
         val success = board.doMove(move)
+        if (move.contains("x")){
+            takeSound(context)
+        }
+        else {
+            playSound(context)
+        }
+
 
 
 
