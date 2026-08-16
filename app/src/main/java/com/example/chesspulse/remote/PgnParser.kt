@@ -128,7 +128,11 @@ class PgnParser {
         return result
     }
 
-
+    fun IsBlackOrientation(pgn: String): Boolean {
+        val regex = Regex("""\[Orientation\s+"(\w+)"\]""")
+        val orientation = regex.find(pgn)?.groupValues?.get(1)?.lowercase() ?: "white"
+        return orientation == "black"
+    }
     fun extractMoveComments(pgn: String): List<String?> {
 
         // Remove PGN headers

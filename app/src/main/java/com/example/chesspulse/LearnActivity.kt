@@ -67,11 +67,12 @@ class LearnActivity : ComponentActivity() {
 
         val course_id = intent.getStringExtra("courseID")
         var nextChapter = chapterList?.get(indx)
-        chapterList?.size?.let {
-            if (it < indx) {
-                nextChapter = chapterList[indx + 1]
-            }
+        Log.d("trace" , "indx = ${indx} , size = ${chapterList?.size}")
+        if (indx < chapterList?.size!! - 1) {
+            nextChapter = chapterList[indx + 1]
         }
+
+
 
         val comment = parser.extractMainlineComment(PGN ?: "")
         val interactive = comment?.contains("<i>")
@@ -113,17 +114,21 @@ fun ChessBoard(
     onCommentIndexerChange: (Int) -> Unit,
     game: List<String>,
     commentIndexer : Int,
+    isFlipped: Boolean,
     modifier: Modifier = Modifier
 ) {
+
     var version = state.boardVersion
     CompositionLocalProvider(
         LocalLayoutDirection provides LayoutDirection.Ltr
     ) {
     Box(modifier = modifier) {
         Column {
-            for (rank in 7 downTo 0) {
+            val rankRange = if (isFlipped) 0..7 else 7 downTo 0
+            for (rank in rankRange) {
                 Row {
-                    for (file in 0..7) {
+                    val fileRange = if (isFlipped) 7 downTo 0 else 0..7
+                    for (file in fileRange) {
                         val square = Square.encode(
                             com.github.bhlangonijr.chesslib.Rank.allRanks[rank],
                             com.github.bhlangonijr.chesslib.File.allFiles[file]
@@ -150,8 +155,8 @@ fun ChessBoard(
                 arrows.forEach { arrow ->
                     if (arrow.size == 2) {
                         drawChessArrow(
-                            from = squareCenter(arrow[0], squareSize),
-                            to = squareCenter(arrow[1], squareSize),
+                            from = squareCenter(arrow[0], squareSize, isFlipped),
+                            to = squareCenter(arrow[1], squareSize, isFlipped),
                             color = Color(0xCC00A000)
                         )
                     }
@@ -161,11 +166,13 @@ fun ChessBoard(
     }
 }
 }
-private fun squareCenter(square: String, squareSize: Float): Offset {
+private fun squareCenter(square: String, squareSize: Float, isFlipped: Boolean): Offset {
     val file = square[0] - 'a'          // 0..7, a->0
     val rank = square[1] - '1'          // 0..7, rank1->0
-    val col = file
-    val row = 7 - rank                  // row 0 = rank 8 (top), matches your `rank in 7 downTo 0` loop
+
+    val col = if (isFlipped) 7 - file else file
+    val row = if (isFlipped) rank else 7 - rank
+
     return Offset(col * squareSize + squareSize / 2f, row * squareSize + squareSize / 2f)
 }
 
@@ -314,6 +321,8 @@ fun LearnScreen(title : String? ,
     arrows.add(0 , emptyList())
 
 
+    val IsFlipped = parser.IsBlackOrientation(Pgn ?: "")
+
 //    Log.d("trace" , arrows.toString())
 
 
@@ -364,6 +373,7 @@ fun LearnScreen(title : String? ,
                 game = game,
                 commentIndexer = commentIndexer,
                 onGameIndexerChange = { gameIndexer = it },
+                isFlipped = IsFlipped,
                 onCommentIndexerChange = {commentIndexer = it}
             )
         }

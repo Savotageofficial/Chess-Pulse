@@ -22,6 +22,7 @@ interface LichessApiService {
         @Query("clocks") clocks: Boolean = true,
         @Query("comments") comments: Boolean = true,
         @Query("variations") variations: Boolean = true,
+        @Query("orientation") orientation: Boolean = true,
         @Header("Authorization") token: String
     ): Response<ResponseBody>
 }
