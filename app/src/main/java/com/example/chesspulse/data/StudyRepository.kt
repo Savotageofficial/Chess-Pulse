@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.chesspulse.remote.LichessApiService
 import com.example.chesspulse.remote.PgnParser
 import com.example.chesspulse.remote.RetrofitInstance
+import com.example.chesspulse.BuildConfig
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -33,7 +34,7 @@ class StudyRepository(private val api: LichessApiService = RetrofitInstance.api)
         withContext(Dispatchers.IO) {
             val response = api.getStudyChapters(
                 studyId = studyId,
-                token = "Bearer lip_jWo2sL2qn4RHoHHe9l9C"
+                token = "Bearer ${BuildConfig.lichess_key}"
             )
             if (!response.isSuccessful) throw Exception("Failed to fetch chapters: ${response.code()}")
             val rawPgn = response.body()?.string() ?: return@withContext emptyList()
