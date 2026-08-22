@@ -5,7 +5,9 @@ import com.example.chesspulse.data.ProfileRepository
 import com.example.chesspulse.data.UserProfile
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 class AuthRepository {
 
@@ -24,7 +26,7 @@ class AuthRepository {
         name: String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit,
-        courses : List<String> = listOf<String>()
+        courses : Map<String, List<String>> = emptyMap()
     ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -42,7 +44,7 @@ class AuthRepository {
                             .addOnSuccessListener {
                                 // Create profile document based on user type
 
-                                createPatientProfile(user.uid, name, email)
+                                createUserProfile(user.uid, name, email)
                                 sendEmailVerification(onSuccess, onFailure)
                             }
                             .addOnFailureListener { exception ->
@@ -59,7 +61,7 @@ class AuthRepository {
 
 
 
-    private fun createPatientProfile(uid: String, name: String, email: String) {
+    private fun createUserProfile(uid: String, name: String, email: String) {
         val User = UserProfile(
             id = uid,
             name = name,
@@ -68,10 +70,41 @@ class AuthRepository {
 
         ProfileRepository.getInstance().createUser(User) { success ->
             if (success) {
-                Log.d("AuthRepo", "Patient profile created successfully for: $uid")
+                Log.d("AuthRepo", "User profile created successfully for: $uid")
             } else {
                 Log.e("AuthRepo", "Failed to create patient profile for: $uid")
             }
+        }
+    }
+    suspend fun getCurrentUserChapters(courseId: String): List<String> {
+        val currentUser = auth.currentUser ?: return emptyList()
+        return try {
+            val document = db.collection("users").document(currentUser.uid).get().await()
+
+            @Suppress("UNCHECKED_CAST")
+            val coursesMap = document.get("courses") as? Map<String, List<String>> ?: emptyMap()
+
+            // Return only chapters for the requested courseId
+            coursesMap[courseId] ?: emptyList()
+        } catch (e: Exception) {
+            Log.e("GetChapters", "Error fetching chapters for $courseId", e)
+            emptyList()
+        }
+    }
+
+
+    suspend fun addChapterToCurrentUser(courseId: String, chapter: String): Boolean {
+        val currentUser = auth.currentUser ?: return false
+
+        return try {
+            val userDocRef = db.collection("users").document(currentUser.uid)
+
+            // "courses.$courseId" targets the specific key in the user's courses map field
+            userDocRef.update("courses.$courseId", FieldValue.arrayUnion(chapter)).await()
+            true
+        } catch (e: Exception) {
+            Log.e("AddChapter", "Failed to add chapter $chapter to course $courseId", e)
+            false
         }
     }
 

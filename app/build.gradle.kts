@@ -76,5 +76,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("com.github.bhlangonijr:chesslib:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
 }

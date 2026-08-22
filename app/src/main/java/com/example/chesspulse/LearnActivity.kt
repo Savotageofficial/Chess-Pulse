@@ -53,7 +53,8 @@ import kotlin.math.sin
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class LearnActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,9 +64,11 @@ class LearnActivity : ComponentActivity() {
         val PGN = intent.getStringExtra("PGN")
         val chapterList: ArrayList<PgnParser.Chapter>? = intent.parcelableArrayList("chaptersList")
         val indx = intent.getIntExtra("chapterindx" , 0)
+        val currentChapterID = intent.getStringExtra("chapterID")
+        val CourseID = intent.getStringExtra("courseID")
         val parser = PgnParser()
 
-        val course_id = intent.getStringExtra("courseID")
+
         var nextChapter = chapterList?.get(indx)
         Log.d("trace" , "indx = ${indx} , size = ${chapterList?.size}")
         if (indx < chapterList?.size!! - 1) {
@@ -74,8 +77,12 @@ class LearnActivity : ComponentActivity() {
 
 
 
-        val comment = parser.extractMainlineComment(PGN ?: "")
-        val interactive = comment?.contains("<i>")
+        val originComment = parser.extractMainlineComment(PGN ?: "")
+        val interactive = originComment?.contains("<i>")
+
+        val repo = AuthRepository()
+
+
 
 
 
@@ -83,12 +90,19 @@ class LearnActivity : ComponentActivity() {
         setContent {
             ChessPulseTheme {
                 LearnScreen(title = title , Pgn = PGN , startingFEN , parser , interactive = (interactive == true),  onNextChapterClick = {
+
+
+                    lifecycleScope.launch {
+                        repo.addChapterToCurrentUser(courseId = CourseID ?: "", chapter = currentChapterID ?: "")
+                    }
                     val intent = Intent(this , LearnActivity::class.java).apply {
                         putExtra("title" , nextChapter?.name)
                         putExtra("startingFEN" , nextChapter?.startFen)
                         putExtra("PGN" , nextChapter?.pgn)
                         putExtra("chaptersList" , chapterList)
                         putExtra("chapterindx" , indx + 1)
+                        putExtra("chapterID" , nextChapter?.id)
+                        putExtra("courseID" , CourseID)
                     }
                     startActivity(intent)
                     finish()
@@ -102,7 +116,7 @@ class LearnActivity : ComponentActivity() {
 private val LIGHT_SQUARE = Color(0xFFf0d9b5)
 private val DARK_SQUARE = Color(0xFFb58863)
 private val SELECTED = Color(0xFFF6F669)
-private val LEGAL_DOT = Color(0x559966CC)
+private val LEGAL_DOT = Color(0xFF4CAF50)
 private val CHECK_RED = Color(0xFFFF6B6B) // light red
 @Composable
 fun ChessBoard(
@@ -331,7 +345,7 @@ fun LearnScreen(title : String? ,
     }
 
     val comments = parser.extractMoveComments(Pgn ?: "").toMutableList()
-    comments.add(0 , parser.extractMainlineComment(Pgn ?: ""))
+    comments.add(0 , parser.extractMainlineComment(Pgn ?: "")?.replace("<i>" , ""))
     var gameIndexer by remember { mutableIntStateOf(0) }
     var currentturn by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
@@ -363,7 +377,24 @@ fun LearnScreen(title : String? ,
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            if (interactive){
+
+                if(gameIndexer == (game.size) ) {
+                    Text(
+                        text = "Find The Best Move ✅",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }else{
+                    Text(
+                        text = "Find The Best Move",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             ChessBoard(
                 state = boardState,
                 arrows = currentArrows,
@@ -485,21 +516,24 @@ fun LearnScreen(title : String? ,
                     )
                 }
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable(onClick = onNextChapterClick)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = "next chapter",
-                        modifier = Modifier
-                            .size(40.dp)
 
-                    )
-                    Text(
-                        text = "Next Chapter",
-                        fontSize = 12.sp
-                    )
+                if(gameIndexer == (game.size) ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable(onClick = onNextChapterClick)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = "next chapter",
+                            modifier = Modifier
+                                .size(40.dp)
+
+                        )
+                        Text(
+                            text = "Next Chapter",
+                            fontSize = 12.sp
+                        )
+                    }
                 }
 
             }

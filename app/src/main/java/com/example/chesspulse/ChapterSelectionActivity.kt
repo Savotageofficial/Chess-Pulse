@@ -1,10 +1,7 @@
 package com.example.chesspulse
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,13 +19,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,13 +40,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.chesspulse.data.StudyMetadata
 import com.example.chesspulse.data.StudyRepository
 import com.example.chesspulse.remote.PgnParser
 import com.example.chesspulse.ui.theme.ChessPulseTheme
-import com.github.bhlangonijr.chesslib.Board
-import com.github.bhlangonijr.chesslib.Square
-import com.github.bhlangonijr.chesslib.move.Move
 
 class ChapterSelectionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,27 +53,58 @@ class ChapterSelectionActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ChessPulseTheme {
-                ChapterSelectionScreen(repo = repo , course_id , title)
+                ChapterSelectionScreen(repo = repo , course_id , title , onChapterClick = {chapter , index , oldChapters ->
+                    val intent = Intent(this, LearnActivity::class.java).apply {
+                        putExtra("title" , chapter.name)
+                        putExtra("startingFEN" , chapter.startFen)
+                        putExtra("PGN" , chapter.pgn)
+                        putExtra("chaptersList" , ArrayList(oldChapters))
+                        putExtra("chapterindx" , index)
+                        putExtra("chapterID" , chapter.id)
+                        putExtra("courseID" , course_id)
+                    }
+                    startActivity(intent)
+                    finish()
+                })
             }
         }
     }
 }
 
 @Composable
-fun ChapterSelectionScreen(repo : StudyRepository, courseid: String?, title: String? , modifier: Modifier = Modifier) {
+fun ChapterSelectionScreen(repo : StudyRepository, courseid: String?, title: String?, onChapterClick:( PgnParser.Chapter , Int , List<PgnParser.Chapter>) -> Unit , modifier: Modifier = Modifier) {
     var chapters by remember { mutableStateOf<List<PgnParser.Chapter>>(emptyList()) }
+    var oldChapters by remember { mutableStateOf<List<PgnParser.Chapter>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
+    val auth = AuthRepository()
 
 
     LaunchedEffect(Unit) {
         try {
-            if(courseid == null || title == null){
+            if (courseid == null || title == null) {
                 chapters = emptyList()
-            }else {
-                chapters = repo.fetchChapters(courseid, title)
+            } else {
+                oldChapters = repo.fetchChapters(courseid, title)
+                val userCourses = auth.getCurrentUserChapters(courseId = courseid)
+
+                val filtered = oldChapters.filter { chapter -> userCourses.contains(chapter.id) }
+
+                chapters = when {
+                    oldChapters.isEmpty() -> emptyList()
+                    filtered.isEmpty() -> listOf(oldChapters.first())
+                    else -> {
+                        val lastUnlockedIndex = oldChapters.indexOfLast { it in filtered }
+                        val nextIndex = lastUnlockedIndex + 1
+                        if (nextIndex < oldChapters.size) {
+                            filtered + oldChapters[nextIndex]
+                        } else {
+                            filtered // user already has the last chapter, nothing to add
+                        }
+                    }
+                }
             }
         } catch (e: Exception) {
             error = "Failed to load chapters"
@@ -148,14 +170,7 @@ fun ChapterSelectionScreen(repo : StudyRepository, courseid: String?, title: Str
                             course = chapter,
                             displayTitle = "Chapter ${index + 1}",
                             modifier = Modifier.clickable{
-                                val intent = Intent(context, LearnActivity::class.java).apply {
-                                    putExtra("title" , chapter.name)
-                                    putExtra("startingFEN" , chapter.startFen)
-                                    putExtra("PGN" , chapter.pgn)
-                                    putExtra("chaptersList" , ArrayList(chapters))
-                                    putExtra("chapterindx" , index)
-                                }
-                                context.startActivity(intent)
+                                onChapterClick(chapter , index , oldChapters)
                             }
                         )
                         Spacer(modifier = Modifier.height(10.dp))
