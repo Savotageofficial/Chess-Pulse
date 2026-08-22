@@ -211,10 +211,17 @@ fun UserCourseProgressSection(modifier: Modifier = Modifier) {
 
     LaunchedEffect(Unit) {
         try {
-            val studies = studyRepo.fetchStudiesMetadata("Mrbullet5")
-            courseGroups = groupStudiesByBaseName(studies)
+            // 1. Get the user's courses map from Firestore first
             completedChapters = authRepo.getCurrentUserCourses()
-            // Total chapter counts per part (cached network calls)
+
+            // 2. Fetch all study metadata, then keep ONLY the parts the user has in Firestore
+            val studies = studyRepo.fetchStudiesMetadata("Mrbullet5")
+                .filter { completedChapters.containsKey(it.id) }
+
+            // 3. Group the filtered parts into courses
+            courseGroups = groupStudiesByBaseName(studies)
+
+            // 4. Total chapter counts only for the kept parts
             val totals = mutableMapOf<String, Int>()
             for (group in courseGroups) {
                 for (part in group.parts) {
