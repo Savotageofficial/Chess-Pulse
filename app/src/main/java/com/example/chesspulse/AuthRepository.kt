@@ -93,6 +93,20 @@ class AuthRepository {
     }
 
 
+    // Get all courses of the current user as a map of courseId -> list of completed chapter IDs
+    suspend fun getCurrentUserCourses(): Map<String, List<String>> {
+        val currentUser = auth.currentUser ?: return emptyMap()
+        return try {
+            val document = db.collection("users").document(currentUser.uid).get().await()
+
+            @Suppress("UNCHECKED_CAST")
+            document.get("courses") as? Map<String, List<String>> ?: emptyMap()
+        } catch (e: Exception) {
+            Log.e("GetCourses", "Error fetching user courses", e)
+            emptyMap()
+        }
+    }
+
     suspend fun addChapterToCurrentUser(courseId: String, chapter: String): Boolean {
         val currentUser = auth.currentUser ?: return false
 
