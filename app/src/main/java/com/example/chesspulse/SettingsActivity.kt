@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -245,7 +246,11 @@ fun UserCourseProgressSection(modifier: Modifier = Modifier) {
         }
     }
 
-    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+    Column(modifier = modifier
+        .fillMaxWidth()
+        .padding(horizontal = 20.dp)
+        .border(width = 2.dp , color = Color(0xFF4E342E) ,  shape = RoundedCornerShape(20.dp))
+        .padding(horizontal = 20.dp)) {
         Text(
             text = "My Courses",
             fontSize = 17.sp,
