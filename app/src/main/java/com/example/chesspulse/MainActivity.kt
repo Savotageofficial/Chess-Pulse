@@ -64,6 +64,7 @@ import com.example.chesspulse.data.ProfileRepository
 import com.example.chesspulse.data.StudyMetadata
 import com.example.chesspulse.data.StudyRepository
 import com.example.chesspulse.ui.theme.ChessPulseTheme
+import com.example.chesspulse.ui.theme.appColors
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -127,14 +128,14 @@ fun HomeScreen(repo : StudyRepository, modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color= Color(0xFFcfdce4))
+            .background(color = appColors().screenBg)
 
     ) {
 
         Spacer(modifier= Modifier
                     .height(20.dp)
                     .fillMaxWidth()
-                    .background(color = Color(0xFFFFFFFF))
+                    .background(color = appColors().surface)
         )
 
         header()
@@ -148,7 +149,7 @@ fun HomeScreen(repo : StudyRepository, modifier: Modifier = Modifier) {
             Text(
                 text = "Available Courses",
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF4E342E)
+                color = appColors().accent
             )
         }
 
@@ -206,8 +207,8 @@ fun CourseCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .border(width = 2.dp , color = Color(0xFF4E342E) ,  shape = RoundedCornerShape(20.dp))
-            .background(color = Color(0xFFFFFFFF))
+            .border(width = 2.dp , color = appColors().accent ,  shape = RoundedCornerShape(20.dp))
+            .background(color = appColors().surface)
             .padding(16.dp)
 
     ) {
@@ -215,13 +216,13 @@ fun CourseCard(
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFF4E342E)), // bg-primary-container
+                .background(appColors().accent), // bg-primary-container
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(R.drawable.chess_knight_24px),
                 contentDescription = null,
-                tint = Color(0xFFC19C94), // text-on-primary-container
+                tint = appColors().accentSoft, // text-on-primary-container
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -230,7 +231,7 @@ fun CourseCard(
             Text(
                 text = group.baseName,
                 style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFF361F1A) // text-primary
+                color = appColors().textPrimary // text-primary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -290,7 +291,7 @@ fun header(){
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .background(color = Color(0xFFFFFFFF))
+            .background(color = appColors().surface)
             .padding(horizontal = 15.dp , vertical = 0.dp),
 
         verticalAlignment = Alignment.CenterVertically,
@@ -350,7 +351,7 @@ fun header(){
         modifier = Modifier
             .fillMaxWidth()
             .height(2.dp)
-            .background(color = Color(0xFFC19C94))
+            .background(color = appColors().accentSoft)
     )
 }
 

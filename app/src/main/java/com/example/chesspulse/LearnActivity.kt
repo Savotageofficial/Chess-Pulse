@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.chesspulse.data.ChessBoardState
 import com.example.chesspulse.ui.theme.ChessPulseTheme
+import com.example.chesspulse.ui.theme.appColors
 import com.github.bhlangonijr.chesslib.Square
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -357,8 +358,8 @@ fun LearnScreen(title : String? ,
 
     val gradientBG = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFFFFC194),
-            Color(0xFF99643C)
+            appColors().learnGradientTop,
+            appColors().learnGradientBottom
         )
     )
     Column(
@@ -412,7 +413,7 @@ fun LearnScreen(title : String? ,
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(horizontal = 12.dp)
-                .border(width = 2.dp , color = Color.Black , shape = RoundedCornerShape(topStart = 20.dp , topEnd = 20.dp))
+                .border(width = 2.dp , color = appColors().panelBorder , shape = RoundedCornerShape(topStart = 20.dp , topEnd = 20.dp))
                 .clip(RoundedCornerShape(topStart = 20.dp , topEnd = 20.dp))
                 .background(gradientBG)
 

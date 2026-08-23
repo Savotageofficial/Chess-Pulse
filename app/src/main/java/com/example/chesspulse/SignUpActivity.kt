@@ -67,6 +67,7 @@ import androidx.core.content.ContextCompat
 import com.example.chesspulse.R
 import com.example.chesspulse.AuthRepository
 import com.example.chesspulse.ui.theme.ChessPulseTheme
+import com.example.chesspulse.ui.theme.appColors
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
@@ -205,13 +206,13 @@ fun SignUpScreen(
     onSignUpClick: (name: String, email: String, password: String) -> Unit = { _, _, _ -> },
     isLoading: Boolean = false
 ) {
-    val toggleBgColor = Color(0xFFDAE9EE)
-    val toggleSelectedBg = Color.White
-    val toggleSelectedText = Color(0xFF38494C)
-    val toggleUnselectedText = Color(0xFF535356)
-    val buttonColor = Color(0xFFFF7D19)
+    val toggleBgColor = appColors().toggleBg
+    val toggleSelectedBg = appColors().toggleSelectedBg
+    val toggleSelectedText = appColors().toggleSelectedText
+    val toggleUnselectedText = appColors().toggleUnselectedText
+    val buttonColor = appColors().inputCursor
     val buttonTextColor = Color.White
-    val textGrayColor = Color(0xFF6B7C86)
+    val textGrayColor = appColors().toggleUnselectedText
 
 
     var userType by remember { mutableStateOf("Patient") }
@@ -226,8 +227,8 @@ fun SignUpScreen(
 
     val gradientBrush = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFFC47A40),
-            Color(0xFF4C2318)
+            appColors().gradientTop,
+            appColors().gradientBottom
         )
     )
 
@@ -260,7 +261,7 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(30.dp))
             Column(modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .background(color = Color(0xFFFFFFFF))
+                .background(color = appColors().surface)
                 .padding(30.dp)
 
             ) {
@@ -268,7 +269,7 @@ fun SignUpScreen(
                     text = "Sign Up",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = appColors().textPrimary
                 )
 
                 Spacer(modifier = Modifier.height(40.dp))
@@ -361,9 +362,9 @@ fun InputField(
     text: String,
     onValueChange: (String) -> Unit
 ) {
-    val inputBgColor = Color(0xFFDAE9EE)
-    val inputTextColor = Color(0xFF6098AA)
-    val buttonColor = Color(0xFF19CEFF)
+    val inputBgColor = appColors().toggleBg
+    val inputTextColor = appColors().inputPlaceholder
+    val buttonColor = appColors().inputCursor
 
     OutlinedTextField(
         value = text,
@@ -376,8 +377,8 @@ fun InputField(
             focusedContainerColor = inputBgColor,
             unfocusedContainerColor = inputBgColor,
             cursorColor = buttonColor,
-            focusedTextColor = Color.Black,
-            unfocusedTextColor = Color.Black,
+            focusedTextColor = appColors().inputText,
+            unfocusedTextColor = appColors().inputText,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
@@ -398,16 +399,16 @@ fun PasswordField(
     OutlinedTextField(
         value = text,
         onValueChange = onValueChange,
-        placeholder = { Text(placeholder, color = Color(0xFF6098AA), fontSize = 16.sp) },
+        placeholder = { Text(placeholder, color = appColors().inputPlaceholder, fontSize = 16.sp) },
         modifier = Modifier
             .fillMaxWidth()
             .height(54.dp),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color(0xFFDAE9EE),
-            unfocusedContainerColor = Color(0xFFDAE9EE),
-            cursorColor = Color(0xFF19CEFF),
-            focusedTextColor = Color.Black,
-            unfocusedTextColor = Color.Black,
+            focusedContainerColor = appColors().toggleBg,
+            unfocusedContainerColor = appColors().toggleBg,
+            cursorColor = appColors().inputCursor,
+            focusedTextColor = appColors().inputText,
+            unfocusedTextColor = appColors().inputText,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),

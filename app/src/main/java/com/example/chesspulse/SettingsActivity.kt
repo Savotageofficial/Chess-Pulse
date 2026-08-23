@@ -127,7 +127,7 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAF3EF))
+            .background(appColors().settingsBg)
             .verticalScroll(rememberScrollState())
             .padding(top = 48.dp, bottom = 24.dp)
     ) {
@@ -136,7 +136,7 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
             text = "Settings",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF361F1A)
+            color = appColors().textPrimary
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -149,7 +149,7 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(104.dp)
-                    .border(3.dp, Color(0xFF4E342E), CircleShape)
+                    .border(3.dp, appColors().accent, CircleShape)
                     .padding(4.dp)
                     .clip(CircleShape)
                     .clickable {
@@ -163,10 +163,10 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(104.dp)
-                    .border(3.dp, Color(0xFF4E342E), CircleShape)
+                    .border(3.dp, appColors().accent, CircleShape)
                     .padding(4.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray)
+                    .background(appColors().accentSoft)
                     .clickable {
                         imagePickerLauncher.launch("image/*")
                     }
@@ -176,7 +176,7 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
         Text(
             text = "Tap photo to change",
             fontSize = 12.sp,
-            color = Color(0xFF8D6E63)
+            color = appColors().textSecondary
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -195,10 +195,10 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
             singleLine = true,
             shape = RoundedCornerShape(14.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF4E342E),
-                unfocusedBorderColor = Color(0xFFC19C94),
-                focusedLabelColor = Color(0xFF4E342E),
-                cursorColor = Color(0xFF4E342E)
+                focusedBorderColor = appColors().accent,
+                unfocusedBorderColor = appColors().accentSoft,
+                focusedLabelColor = appColors().accent,
+                cursorColor = appColors().accent
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -224,7 +224,7 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
                 onLogout()
             },
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFE5E5)),
+            colors = ButtonDefaults.buttonColors(containerColor = appColors().logoutBg),
             modifier = Modifier
                 .padding(20.dp)
                 .shadow(4.dp, RoundedCornerShape(16.dp))
@@ -291,14 +291,14 @@ fun UserCourseProgressSection(modifier: Modifier = Modifier) {
         .padding(horizontal = 20.dp)
         .shadow(4.dp, RoundedCornerShape(20.dp))
         .clip(RoundedCornerShape(20.dp))
-        .background(Color.White)
-        .border(width = 1.dp, color = Color(0xFFC19C94), shape = RoundedCornerShape(20.dp))
+        .background(appColors().surface)
+        .border(width = 1.dp, color = appColors().accentSoft, shape = RoundedCornerShape(20.dp))
         .padding(horizontal = 16.dp, vertical = 12.dp)) {
         Text(
             text = "My Courses",
             fontSize = 17.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF361F1A)
+            color = appColors().textPrimary
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -343,7 +343,7 @@ fun CourseProgressCard(
             .fillMaxWidth()
             .shadow(2.dp, RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFFDF9F7))
+            .background(appColors().cardBg)
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -352,13 +352,13 @@ fun CourseProgressCard(
             modifier = Modifier
                 .size(44.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFF4E342E)),
+                .background(appColors().accent),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(R.drawable.chess_knight_24px),
                 contentDescription = null,
-                tint = Color(0xFFC19C94),
+                tint = appColors().accentSoft,
                 modifier = Modifier.size(26.dp)
             )
         }
@@ -369,7 +369,7 @@ fun CourseProgressCard(
                 Text(
                     text = group.baseName,
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color(0xFF361F1A),
+                    color = appColors().textPrimary,
                     modifier = Modifier.weight(1f),
                     maxLines = 1
                 )
@@ -377,15 +377,15 @@ fun CourseProgressCard(
                     text = "$percent%",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF4E342E)
+                    color = appColors().accent
                 )
             }
             Spacer(modifier = Modifier.height(6.dp))
             LinearProgressIndicator(
                 progress = { progress },
                 modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
-                color = Color(0xFF4E342E),
-                trackColor = Color(0xFFE5D5CC)
+                color = appColors().accent,
+                trackColor = appColors().track
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(

@@ -38,6 +38,7 @@ import com.example.chesspulse.AuthRepository
 import com.example.chesspulse.MainActivity
 import com.example.chesspulse.SignUpActivity
 import com.example.chesspulse.ui.theme.ChessPulseTheme
+import com.example.chesspulse.ui.theme.appColors
 import com.example.chesspulse.R
 
 class LoginActivity : ComponentActivity() {
@@ -126,19 +127,19 @@ fun LoginScreen(
     onForgotPasswordClick: (email: String) -> Unit = {},
     isLoading: Boolean = false
 ) {
-    val inputBgColor = Color(0xFFE6F1F5)
-    val inputPlaceholderColor = Color(0xFF6098AA)
-    val buttonColor = Color(0xFFFF7D19)
+    val inputBgColor = appColors().inputBg
+    val inputPlaceholderColor = appColors().inputPlaceholder
+    val buttonColor = appColors().inputCursor
     val buttonTextColor = Color.White
-    val textGrayColor = Color(0xFF6B7C86)
+    val textGrayColor = appColors().toggleUnselectedText
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     val gradientBackground = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFFC47A40),
-            Color(0xFF4C2318)
+            appColors().gradientTop,
+            appColors().gradientBottom
         )
     )
 
@@ -163,7 +164,7 @@ fun LoginScreen(
 
         Column(modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
-            .background(color = Color(0xFFFFFFFF))
+            .background(color = appColors().surface)
             .padding(30.dp)
 
         ) {
@@ -172,7 +173,7 @@ fun LoginScreen(
                 text = "Welcome Back , Master",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = appColors().textPrimary,
                 modifier = Modifier.align(Alignment.Start)
             )
 
@@ -193,10 +194,10 @@ fun LoginScreen(
                     focusedContainerColor = inputBgColor,
                     unfocusedContainerColor = inputBgColor,
                     cursorColor = buttonColor,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    focusedIndicatorColor = Color(0xFF30190c),
-                    unfocusedIndicatorColor = Color(0xFF30190c)
+                    focusedTextColor = appColors().inputText,
+                    unfocusedTextColor = appColors().inputText,
+                    focusedIndicatorColor = appColors().inputIndicator,
+                    unfocusedIndicatorColor = appColors().inputIndicator
                 ),
                 shape = RoundedCornerShape(20.dp),
                 singleLine = true,
@@ -225,10 +226,10 @@ fun LoginScreen(
                     focusedContainerColor = inputBgColor,
                     unfocusedContainerColor = inputBgColor,
                     cursorColor = buttonColor,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    focusedIndicatorColor = Color(0xFF30190c),
-                    unfocusedIndicatorColor = Color(0xFF30190c)
+                    focusedTextColor = appColors().inputText,
+                    unfocusedTextColor = appColors().inputText,
+                    focusedIndicatorColor = appColors().inputIndicator,
+                    unfocusedIndicatorColor = appColors().inputIndicator
                 ),
                 shape = RoundedCornerShape(20.dp),
                 singleLine = true,

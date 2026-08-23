@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.example.chesspulse.data.StudyRepository
 import com.example.chesspulse.remote.PgnParser
 import com.example.chesspulse.ui.theme.ChessPulseTheme
+import com.example.chesspulse.ui.theme.appColors
 
 class ChapterSelectionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,14 +117,14 @@ fun ChapterSelectionScreen(repo : StudyRepository, courseid: String?, title: Str
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color= Color(0xFFcfdce4))
+            .background(color = appColors().screenBg)
 
     ) {
 
         Spacer(modifier= Modifier
             .height(20.dp)
             .fillMaxWidth()
-            .background(color = Color(0xFFFFFFFF))
+            .background(color = appColors().surface)
         )
 
         header()
@@ -137,7 +138,7 @@ fun ChapterSelectionScreen(repo : StudyRepository, courseid: String?, title: Str
             Text(
                 text = "$title",
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF4E342E)
+                color = appColors().accent
             )
         }
 
@@ -196,8 +197,8 @@ fun CourseCardChapters(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .border(width = 2.dp , color = Color(0xFF4E342E) ,  shape = RoundedCornerShape(20.dp))
-            .background(color = Color(0xFFFFFFFF))
+            .border(width = 2.dp , color = appColors().accent ,  shape = RoundedCornerShape(20.dp))
+            .background(color = appColors().surface)
             .padding(16.dp)
 
     ) {
@@ -205,13 +206,13 @@ fun CourseCardChapters(
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFF4E342E)), // bg-primary-container
+                .background(appColors().accent), // bg-primary-container
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(R.drawable.chess_knight_24px),
                 contentDescription = null,
-                tint = Color(0xFFC19C94), // text-on-primary-container
+                tint = appColors().accentSoft, // text-on-primary-container
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -220,7 +221,7 @@ fun CourseCardChapters(
             Text(
                 text = displayTitle ,
                 style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFF361F1A) // text-primary
+                color = appColors().textPrimary // text-primary
             )
             Spacer(modifier = Modifier.height(4.dp))
         }
