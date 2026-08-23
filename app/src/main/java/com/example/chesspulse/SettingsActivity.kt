@@ -12,6 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.shadow
+import androidx.compose.material3.TextButton
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +26,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -41,6 +45,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -119,9 +125,21 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFFAF3EF))
+            .verticalScroll(rememberScrollState())
+            .padding(top = 48.dp, bottom = 24.dp)
     ) {
+
+        Text(
+            text = "Settings",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF361F1A)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Show current image, or a placeholder
         val bitmap = profileImageBase64?.let { profileRepo.base64ToBitmap(it) }
@@ -131,7 +149,9 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
                 contentDescription = "Profile picture",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(96.dp)
+                    .size(104.dp)
+                    .border(3.dp, Color(0xFF4E342E), CircleShape)
+                    .padding(4.dp)
                     .clip(CircleShape)
                     .clickable {
                         imagePickerLauncher.launch("image/*")
@@ -143,7 +163,9 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
                 contentDescription = "Profile picture",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(96.dp)
+                    .size(104.dp)
+                    .border(3.dp, Color(0xFF4E342E), CircleShape)
+                    .padding(4.dp)
                     .clip(CircleShape)
                     .background(Color.LightGray)
                     .clickable {
@@ -151,6 +173,12 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
                     }
             )
         }
+
+        Text(
+            text = "Tap photo to change",
+            fontSize = 12.sp,
+            color = Color(0xFF8D6E63)
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
         var name by remember { mutableStateOf("") }
@@ -164,7 +192,19 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            modifier = Modifier.onFocusChanged {
+            label = { Text("Your name") },
+            singleLine = true,
+            shape = RoundedCornerShape(14.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF4E342E),
+                unfocusedBorderColor = Color(0xFFC19C94),
+                focusedLabelColor = Color(0xFF4E342E),
+                cursorColor = Color(0xFF4E342E)
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .onFocusChanged {
                 if (hasFocus && !it.isFocused) {
                     profileRepo.updateCurrentUser(
                         mapOf("name" to name),
@@ -184,10 +224,11 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
                 authRepo.logout()
                 onLogout()
             },
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFE5E5)),
             modifier = Modifier
                 .padding(20.dp)
+                .shadow(4.dp, RoundedCornerShape(16.dp))
                 .fillMaxWidth()
                 .height(55.dp)
 
@@ -249,8 +290,11 @@ fun UserCourseProgressSection(modifier: Modifier = Modifier) {
     Column(modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 20.dp)
-        .border(width = 2.dp , color = Color(0xFF4E342E) ,  shape = RoundedCornerShape(20.dp))
-        .padding(horizontal = 20.dp)) {
+        .shadow(4.dp, RoundedCornerShape(20.dp))
+        .clip(RoundedCornerShape(20.dp))
+        .background(Color.White)
+        .border(width = 1.dp, color = Color(0xFFC19C94), shape = RoundedCornerShape(20.dp))
+        .padding(horizontal = 16.dp, vertical = 12.dp)) {
         Text(
             text = "My Courses",
             fontSize = 17.sp,
@@ -298,8 +342,9 @@ fun CourseProgressCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(2.dp, RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
+            .background(Color(0xFFFDF9F7))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
