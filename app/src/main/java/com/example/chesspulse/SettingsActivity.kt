@@ -136,7 +136,7 @@ fun SettingsScreen(modifier: Modifier = Modifier , onLogout: () -> Unit) {
             text = "Settings",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = appColors().textPrimary
+            color = appColors().title
         )
         Spacer(modifier = Modifier.height(24.dp))
 

@@ -307,7 +307,8 @@ fun header(){
         Text(
             text = "Chess Pulse",
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            color = appColors().title
         )
 //        Box(modifier = Modifier
 //

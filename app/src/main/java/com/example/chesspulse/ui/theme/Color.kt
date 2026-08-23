@@ -30,6 +30,8 @@ data class AppColors(
     val cardBg: Color,
     // Primary text
     val textPrimary: Color,
+    // Screen titles (header) — dark in light mode, white in dark mode
+    val title: Color,
     // Secondary / muted text
     val textSecondary: Color,
     // Brand dark brown (borders, icon boxes, accents)
@@ -67,6 +69,7 @@ val LightAppColors = AppColors(
     surface = Color(0xFFFFFFFF),
     cardBg = Color(0xFFFDF9F7),
     textPrimary = Color(0xFF361F1A),
+    title = Color(0xFF361F1A),
     textSecondary = Color(0xFF8D6E63),
     accent = Color(0xFF4E342E),
     accentSoft = Color(0xFFC19C94),
@@ -94,6 +97,7 @@ val DarkAppColors = AppColors(
     surface = Color(0xFF241C18),
     cardBg = Color(0xFF2A211C),
     textPrimary = Color(0xFFEFE2DB),
+    title = Color(0xFFFFFFFF),
     textSecondary = Color(0xFFBCA79E),
     accent = Color(0xFF8D6E63),
     accentSoft = Color(0xFF6B5248),
