@@ -137,11 +137,11 @@ fun ChessBoard(
     CompositionLocalProvider(
         LocalLayoutDirection provides LayoutDirection.Ltr
     ) {
-    Box(modifier = modifier) {
-        Column {
+    Box(modifier = modifier.aspectRatio(1f)) {
+        Column(modifier = Modifier.fillMaxSize()) {
             val rankRange = if (isFlipped) 0..7 else 7 downTo 0
             for (rank in rankRange) {
-                Row {
+                Row(modifier = Modifier.weight(1f)) {
                     val fileRange = if (isFlipped) 7 downTo 0 else 0..7
                     for (file in fileRange) {
                         val square = Square.encode(
@@ -248,7 +248,8 @@ private fun ChessSquare(
 
     Box(
         modifier = Modifier
-            .size(40.dp)
+            .weight(1f)
+            .fillMaxHeight()
             .background(bgColor)
             .clickable {
                 if (interactive && (gameIndexer < game.size)){
