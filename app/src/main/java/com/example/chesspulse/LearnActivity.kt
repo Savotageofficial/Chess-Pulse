@@ -149,6 +149,7 @@ fun ChessBoard(
                             com.github.bhlangonijr.chesslib.File.allFiles[file]
                         )
                         ChessSquare(
+                            modifier = Modifier.weight(1f),
                             square = square,
                             state = state,
                             isLight = (rank + file) % 2 == 1,
@@ -227,6 +228,7 @@ private fun ChessSquare(
     state: ChessBoardState,
     isLight: Boolean,
     interactive: Boolean,
+    modifier: Modifier = Modifier,
     gameIndexer: Int,
     game : List<String>,
     onGameIndexerChange: (Int) -> Unit,
@@ -247,8 +249,7 @@ private fun ChessSquare(
     }
 
     Box(
-        modifier = Modifier
-            .weight(1f)
+        modifier = modifier
             .fillMaxHeight()
             .background(bgColor)
             .clickable {
