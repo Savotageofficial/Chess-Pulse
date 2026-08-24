@@ -147,8 +147,11 @@ class ChessBoardState(initialFen: String? = null) {
                     }else {
                         playSound(context)
                     }
-                    this.makeMove(nextMove , context = context)
-                    boardVersion++
+                    // Don't play the reply move if the game just ended
+                    if (!board.isMated && !board.isDraw && !board.isStaleMate) {
+                        this.makeMove(nextMove , context = context)
+                        boardVersion++
+                    }
 
                 }
             }
