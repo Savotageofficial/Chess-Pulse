@@ -67,6 +67,7 @@ import com.example.chesspulse.data.StudyRepository
 import com.example.chesspulse.CourseGroup
 import com.example.chesspulse.groupStudiesByBaseName
 import com.example.chesspulse.ui.theme.ChessPulseTheme
+import com.example.chesspulse.ui.theme.appColors
 
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
