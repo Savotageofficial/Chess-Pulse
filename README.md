@@ -4,7 +4,7 @@ A Jetpack Compose Android app for chess study and improvement — built for play
 
 **Version:** 1.0 (v1.0)  
 **Min SDK:** API 26 (Android 8.0) | **Target SDK:** API 36  
-**Language:** Kotlin | **UI:** Jetpack Compose (Material 3) | **Architecture:** MVVM
+**Language:** Kotlin | **UI:** Jetpack Compose (Material 3)
 
 ---
 
@@ -26,43 +26,6 @@ A Jetpack Compose Android app for chess study and improvement — built for play
 | **Backend** | Firebase Auth, Cloud Firestore (BOM 34.16.0) |
 | **Chess logic** | chesslib 1.3.7 |
 | **Coroutines** | kotlinx-coroutines-play-services |
-| **Architecture** | MVVM, Repository pattern, Sealed classes |
-
-## Build & Run
-
-1. **Prerequisites:** Android Studio (latest) + JDK 17
-2. **Clone & open:**
-   ```bash
-   git clone -b J.A.R.V.I.S https://github.com/Savotageofficial/ChessPulse.git
-   cd ChessPulse
-   ```
-3. **Firebase:** 
-   - Add your `google-services.json` from the [Firebase Console](https://console.firebase.google.com/) → Project Settings → Your Apps  
-   - Ensure your package name matches: `com.example.chesspulse`
-4. **Build:** Open in Android Studio → `Run` (or `./gradlew installDebug` from CLI)
-
-## Project Structure
-
-```
-app/src/main/java/com/example/chesspulse/
-├── LoginActivity.kt          # Auth landing
-├── SignUpActivity.kt         # Registration
-├── PartSelectionActivity.kt  # Main nav hub
-├── ChapterSelectionActivity.kt
-├── LearnActivity.kt          # Chapter/Pgn reader
-├── SettingsActivity.kt
-├── AuthRepository.kt
-├── data/
-│   ├── ChessBoardState.kt      # State holder for board UI
-│   ├── StudyMetadata.kt        # Lichess study model
-│   ├── UserProfile.kt          # Firestore user doc
-│   ├── StudyRepository.kt      # Lichess API calls
-│   └── ProfileRepository.kt    # Firestore user/profile
-└── remote/
-    ├── RetrofitInstance.kt     # API client
-    ├── PgnParser.kt            # PGN parsing
-    └── LichessApiService.kt    # Lichess REST endpoints
-```
 
 ## Development Notes
 
