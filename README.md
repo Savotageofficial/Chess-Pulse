@@ -29,7 +29,6 @@ A Jetpack Compose Android app for chess study and improvement — built for play
 
 ## Development Notes
 
-- `JARVIS` branch contains all active development and fixes
 - Layout uses responsive padding; smaller screens scroll login content and pad system bars + keyboard insets
 - Ships without native C++ — pure Kotlin + managed libs
 - Currently pre-release (v1.0): feedback welcome via GitHub issues
