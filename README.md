@@ -31,7 +31,7 @@ A Jetpack Compose Android app for chess study and improvement — built for play
 
 - Layout uses responsive padding; smaller screens scroll login content and pad system bars + keyboard insets
 - Ships without native C++ — pure Kotlin + managed libs
-- Currently pre-release (v1.0): feedback welcome via GitHub issues
+- Currently pre-release : feedback welcome via GitHub issues
 
 ## Contributing
 
