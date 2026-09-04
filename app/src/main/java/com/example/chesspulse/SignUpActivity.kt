@@ -75,6 +75,7 @@ import com.example.chesspulse.ui.theme.appColors
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
+import java.nio.file.WatchEvent
 
 class SignUpActivity : ComponentActivity() {
 
@@ -190,19 +191,25 @@ class SignUpActivity : ComponentActivity() {
 @Composable
 fun SplashScreen() {
     val gradientBrush = Brush.verticalGradient(
-        colors = listOf(Color(0xFF009FFD), Color(0xFF2A2A72))
+        colors = listOf(
+            appColors().gradientTop,
+            appColors().gradientBottom
+        )
     )
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = gradientBrush),
-        contentAlignment = Alignment.Center
+         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "Logo",
-            modifier = Modifier.size(180.dp)
+            modifier = Modifier.size(180.dp).clip(RoundedCornerShape(20.dp))
         )
+        Spacer(modifier = Modifier.height(20.dpe ))
+        CircularProgressIndicator()
     }
 }
 
@@ -258,7 +265,7 @@ fun SignUpScreen(
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier.size(200.dp).clip(RoundedCornerShape(20.dp))
             )
 
 
