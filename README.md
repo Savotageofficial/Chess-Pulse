@@ -1,6 +1,6 @@
 # ChessPulse
 
-<img alt="Chess-Pulse Banner" src="Chess-Banner" title="Banner" />
+<img alt="Chess-Pulse Banner" src="Chess-Banner.png" title="Banner" />
 
 A Jetpack Compose Android app for chess study and improvement — built for players who want to turn Lichess studies into actionable learning.
 
